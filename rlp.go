@@ -25,7 +25,7 @@ func main() {
 
 		relationshipsString := os.Getenv("PLATFORM_RELATIONSHIPS")
 		if relationshipsString == "" {
-			fmt.Println("No relationships found")
+			os.Stderr.WriteString("No relationships found")
 			os.Exit(1)
 		}
 
@@ -44,7 +44,7 @@ func main() {
 				}
 			}
 		} else {
-			fmt.Printf("Relationship not found: %s\n", *relName)
+			os.Stderr.WriteString(fmt.Sprintf("Relationship not found: %s\n", *relName))
 			os.Exit(1)
 		}
 
