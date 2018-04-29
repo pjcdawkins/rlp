@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/jawher/mow.cli"
@@ -31,7 +30,8 @@ func main() {
 
 		relationshipsBytes, _ := base64.StdEncoding.DecodeString(relationshipsString)
 		if err := json.Unmarshal(relationshipsBytes, &relationships); err != nil {
-			log.Fatal(err)
+			os.Stderr.WriteString(err.Error())
+			os.Exit(1)
 		}
 
 		relationshipsList, relationshipExists := relationships[*relName]
