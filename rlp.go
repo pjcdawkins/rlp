@@ -25,7 +25,7 @@ func main() {
 
 		relationshipsString := os.Getenv("PLATFORM_RELATIONSHIPS")
 		if relationshipsString == "" {
-			os.Stderr.WriteString("No relationships found")
+			os.Stderr.WriteString("No relationships found\n")
 			os.Exit(1)
 		}
 
@@ -40,7 +40,7 @@ func main() {
 					formatted, _ := json.MarshalIndent(relationship, "", "  ")
 					fmt.Printf("%s", formatted)
 				} else {
-					fmt.Printf("%s", relationship[*property])
+					fmt.Printf("%v", relationship[*property])
 				}
 			}
 		} else {
