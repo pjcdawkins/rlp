@@ -39,15 +39,22 @@ func main() {
 				if *property == "" {
 					formatted, _ := json.MarshalIndent(relationship, "", "  ")
 					fmt.Printf("%s", formatted)
-				} else {
-					fmt.Printf("%v", relationship[*property])
+					continue
 				}
+
+				if value, propertyExists := relationship[*property]; propertyExists {
+					fmt.Printf("%v", value)
+					continue
+				}
+
+				os.Stderr.WriteString(fmt.Sprintf("Property '%s' not found in relationship '%s'\n", *property, *relName))
+				os.Exit(1)
 			}
-		} else {
-			os.Stderr.WriteString(fmt.Sprintf("Relationship not found: %s\n", *relName))
-			os.Exit(1)
+			return
 		}
 
+		os.Stderr.WriteString(fmt.Sprintf("Relationship not found: '%s'\n", *relName))
+		os.Exit(1)
 	}
 
 	app.Run(os.Args)
