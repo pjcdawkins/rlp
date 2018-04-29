@@ -34,27 +34,27 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if list, exists := relationships[*relName]; exists {
-			for _, relationship := range list {
-				if *property == "" {
-					formatted, _ := json.MarshalIndent(relationship, "", "  ")
-					fmt.Printf("%s", formatted)
-					continue
-				}
-
-				if value, propertyExists := relationship[*property]; propertyExists {
-					fmt.Printf("%v", value)
-					continue
-				}
-
-				os.Stderr.WriteString(fmt.Sprintf("Property '%s' not found in relationship '%s'\n", *property, *relName))
-				os.Exit(1)
-			}
-			return
+		relationshipsList, relationshipExists := relationships[*relName]
+		if !relationshipExists {
+			os.Stderr.WriteString(fmt.Sprintf("Relationship not found: '%s'\n", *relName))
+			os.Exit(1)
 		}
 
-		os.Stderr.WriteString(fmt.Sprintf("Relationship not found: '%s'\n", *relName))
-		os.Exit(1)
+		for _, relationship := range relationshipsList {
+			if *property == "" {
+				formatted, _ := json.MarshalIndent(relationship, "", "  ")
+				fmt.Printf("%s", formatted)
+				continue
+			}
+
+			if value, propertyExists := relationship[*property]; propertyExists {
+				fmt.Printf("%v", value)
+				continue
+			}
+
+			os.Stderr.WriteString(fmt.Sprintf("Property '%s' not found in relationship '%s'\n", *property, *relName))
+			os.Exit(1)
+		}
 	}
 
 	app.Run(os.Args)
