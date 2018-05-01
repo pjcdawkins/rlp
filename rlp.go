@@ -9,6 +9,11 @@ import (
 	"github.com/jawher/mow.cli"
 )
 
+func errorOut(message string) {
+	os.Stderr.WriteString(message + "\n")
+	os.Exit(1)
+}
+
 func main() {
 	app := cli.App("rlp", "Read relationship properties")
 
@@ -24,19 +29,27 @@ func main() {
 
 		relationshipsString := os.Getenv("PLATFORM_RELATIONSHIPS")
 		if relationshipsString == "" {
-			os.Stderr.WriteString("No relationships found\n")
-			os.Exit(1)
+			errorOut("The PLATFORM_RELATIONSHIPS variable is not defined")
 		}
 
 		relationshipsBytes, _ := base64.StdEncoding.DecodeString(relationshipsString)
 		if err := json.Unmarshal(relationshipsBytes, &relationships); err != nil {
-			os.Stderr.WriteString(err.Error())
-			os.Exit(1)
+			errorOut(err.Error())
+		}
+
+		if len(relationships) == 0 {
+			errorOut("No relationships found")
 		}
 
 		relationshipsList, relationshipExists := relationships[*relName]
 		if !relationshipExists {
 			os.Stderr.WriteString(fmt.Sprintf("Relationship not found: '%s'\n", *relName))
+			if len(relationships) > 0 {
+				os.Stderr.WriteString("Available relationships:\n")
+				for name, _ := range relationships {
+					os.Stderr.WriteString("  " + name + "\n")
+				}
+			}
 			os.Exit(1)
 		}
 
@@ -52,8 +65,7 @@ func main() {
 				continue
 			}
 
-			os.Stderr.WriteString(fmt.Sprintf("Property '%s' not found in relationship '%s'\n", *property, *relName))
-			os.Exit(1)
+			errorOut(fmt.Sprintf("Property '%s' not found in relationship '%s'\n", *property, *relName))
 		}
 	}
 
