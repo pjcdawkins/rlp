@@ -43,12 +43,12 @@ func main() {
 		for _, relationship := range relationshipsList {
 			if *property == "" {
 				formatted, _ := json.MarshalIndent(relationship, "", "  ")
-				fmt.Printf("%s", formatted)
+				fmt.Printf("%s\n", formatted)
 				continue
 			}
 
 			if value, propertyExists := relationship[*property]; propertyExists {
-				fmt.Printf("%v", value)
+				fmt.Printf("%v\n", value)
 				continue
 			}
 
